@@ -1,23 +1,8 @@
-import { Application, Router } from "https://deno.land/x/oak/mod.ts";
+import { Application } from "https://deno.land/x/oak/mod.ts";
+
+import router from "./routes.ts";
 
 const app = new Application();
-
-const router = new Router();
-
-router.get("/user", (context) => {
-  const user = {
-    name: "Matheus Guermandi",
-    email: "matheus_guermandi@hotmail.com",
-  };
-  context.response.body = user;
-});
-
-router.post("/user", async (context) => {
-  const { value } = await context.request.body();
-
-  context.response.status = 201;
-  context.response.body = value;
-});
 
 app.use(router.routes());
 
