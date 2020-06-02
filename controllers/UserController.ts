@@ -1,5 +1,5 @@
 import db from "../config/databases.ts";
-import validation from '../validation.ts'
+import validation from "../validation.ts";
 
 const user = db.collection("users");
 
@@ -18,10 +18,9 @@ export default {
   },
 
   async store(context: any) {
-    const value = await validation.validate(context)
+    const value = await validation.validate(context);
 
-
-    if(value){
+    if (value) {
       const insertIn = await user.insertOne(value);
       context.response.status = 201;
       context.response.body = insertIn;
@@ -29,48 +28,23 @@ export default {
   },
 
   async update(context: any) {
-    if (!context.request.hasBody) {
-      context.response.status = 400; //bad request
-      context.response.body = { error: "Please provide the required data" };
+    const value = await validation.validateUpdate(context);
 
-      return;
-    }
-
-    const { value } = await context.request.body();
-
-    const data = {
-      email: value.email,
-      name: value.name,
-      password: value.password,
-    };
-
-    if (!value.email) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = { error: { message: "Email fiel is required" } };
-
-      return;
-    }
-
-    if (!value.name) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = { error: { message: "Name fiel is required" } };
-
-      return;
-    }
-
-    if (!value.password) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = {
-        error: { message: "Password fiel is required" },
+    if (value) {
+      const data = {
+        email: value.email,
+        name: value.name,
+        password: value.password,
       };
 
-      return;
+      await user.updateOne(
+        { _id: { $oid: context.params.id } },
+        { $set: value },
+      );
+
+      context.response.status = 200;
+      context.response.body = { message: "successfully updated" };
     }
-
-    await user.updateOne({ _id: { $oid: context.params.id } }, { $set: value });
-
-    context.response.status = 200;
-    context.response.body = { message: "successfully updated" };
   },
 
   async destroy(context: any) {

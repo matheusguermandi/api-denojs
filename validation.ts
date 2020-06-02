@@ -8,7 +8,7 @@ export default {
     if (!value) {
       context.response.status = 400; //bad request
       context.response.body = { error: "Please provide the required data" };
-      return;
+      return false;
     }
 
     const fields = ["name", "email", "password"];
@@ -20,9 +20,21 @@ export default {
       }
     }
 
-    if(status){
-        context.response.body = {errors};
-        return false;
+    if (status) {
+      context.response.body = { errors };
+      return false;
+    }
+
+    return value;
+  },
+
+  async validateUpdate(context: any) {
+    const { value } = await context.request.body();
+
+    if (!value || Object.keys(value).length === 0) {
+      context.response.status = 400; //bad request
+      context.response.body = { error: "Please provide the required data" };
+      return false;
     }
 
     return value;
