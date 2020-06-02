@@ -1,4 +1,5 @@
 import db from "../config/databases.ts";
+import validation from '../validation.ts'
 
 const user = db.collection("users");
 
@@ -17,42 +18,14 @@ export default {
   },
 
   async store(context: any) {
-    if (!context.request.hasBody) {
-      context.response.status = 400; //bad request
-      context.response.body = { error: "Please provide the required data" };
+    const value = await validation.validate(context)
 
-      return;
+
+    if(value){
+      const insertIn = await user.insertOne(value);
+      context.response.status = 201;
+      context.response.body = insertIn;
     }
-
-    const { value } = await context.request.body();
-
-    if (!value.email) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = { error: { message: "Email fiel is required" } };
-
-      return;
-    }
-
-    if (!value.name) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = { error: { message: "Name fiel is required" } };
-
-      return;
-    }
-
-    if (!value.password) {
-      context.response.status = 422; // unprocessable entity
-      context.response.body = {
-        error: { message: "Password fiel is required" },
-      };
-
-      return;
-    }
-
-    const insertIn = await user.insertOne(value);
-
-    context.response.status = 201;
-    context.response.body = insertIn;
   },
 
   async update(context: any) {
