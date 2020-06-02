@@ -55,7 +55,12 @@ export default {
     context.response.body = insertIn;
   },
 
-  update(context: any) {
+  async update(context: any) {
+    const { value } = await context.request.body();
+    await user.updateOne({ _id: { $oid: context.params.id } }, { $set: value });
+
+    context.response.status = 200;
+    context.response.body = { message: "successfully updated" };
   },
 
   async destroy(context: any) {
