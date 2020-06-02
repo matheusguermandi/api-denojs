@@ -56,7 +56,44 @@ export default {
   },
 
   async update(context: any) {
+    if (!context.request.hasBody) {
+      context.response.status = 400; //bad request
+      context.response.body = { error: "Please provide the required data" };
+
+      return;
+    }
+
     const { value } = await context.request.body();
+
+    const data = {
+      email: value.email,
+      name: value.name,
+      password: value.password,
+    };
+
+    if (!value.email) {
+      context.response.status = 422; // unprocessable entity
+      context.response.body = { error: { message: "Email fiel is required" } };
+
+      return;
+    }
+
+    if (!value.name) {
+      context.response.status = 422; // unprocessable entity
+      context.response.body = { error: { message: "Name fiel is required" } };
+
+      return;
+    }
+
+    if (!value.password) {
+      context.response.status = 422; // unprocessable entity
+      context.response.body = {
+        error: { message: "Password fiel is required" },
+      };
+
+      return;
+    }
+
     await user.updateOne({ _id: { $oid: context.params.id } }, { $set: value });
 
     context.response.status = 200;
