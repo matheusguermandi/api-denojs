@@ -29,21 +29,23 @@ export default {
     if (!value.email) {
       context.response.status = 422; // unprocessable entity
       context.response.body = { error: { message: "Email fiel is required" } };
-      
+
       return;
     }
 
     if (!value.name) {
       context.response.status = 422; // unprocessable entity
       context.response.body = { error: { message: "Name fiel is required" } };
-      
+
       return;
     }
 
     if (!value.password) {
       context.response.status = 422; // unprocessable entity
-      context.response.body = { error: { message: "Password fiel is required" } };
-      
+      context.response.body = {
+        error: { message: "Password fiel is required" },
+      };
+
       return;
     }
 
@@ -56,6 +58,9 @@ export default {
   update(context: any) {
   },
 
-  destroy(context: any) {
+  async destroy(context: any) {
+    await user.deleteOne({ _id: { $oid: context.params.id } });
+
+    context.response.status = 204; // no content
   },
 };
