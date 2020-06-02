@@ -1,14 +1,19 @@
+import db from "../config/databases.ts";
+
+const user = db.collection("users");
+
 export default {
-  index(context: any) {
-    const user = {
-      name: "Matheus Guermandi",
-      email: "matheus_guermandi@hotmail.com",
-    };
-    context.response.body = user;
+  async index(context: any) {
+    const data = await user.find();
+    context.response.body = data;
   },
 
-  show(context: any) {
-    context.response.body = context.params.id;
+  async show(context: any) {
+    const data = await user.findOne({
+      _id: { $oid: context.params.id}
+    })
+
+    context.response.body = data;
   },
 
   async store(context: any) {
