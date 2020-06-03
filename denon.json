@@ -1,0 +1,24 @@
+{
+    "$schema": "https://deno.land/x/denon/schema.json",
+    "scripts": {
+      "run": {
+        "cmd": "main.ts",
+        "allow": [
+            "net",
+            "read",
+            "write",
+            "plugin"
+        ],
+        "unstable": true
+      }
+    },
+    "logger": {
+      "debug": true
+    },
+    "watcher": {
+      "interval": 350,
+      "exts": ["ts", "json", "ini"]
+    }
+  }
+         
+        
