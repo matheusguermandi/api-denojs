@@ -26,6 +26,8 @@ export default {
   async store(context: any) {
     const value = await validation.validate(context);
 
+    value.created_at = parseInt((new Date().getTime() / 1000).toString());
+
     if (value) {
       const insertIn = await user.insertOne(value);
       context.response.status = 201;
