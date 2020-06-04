@@ -1,3 +1,5 @@
+import { ObjectId } from "https://deno.land/x/mongo@v0.7.0/mod.ts";
+
 import db from "../config/databases.ts";
 import validation from "../validation.ts";
 
@@ -10,11 +12,15 @@ export default {
   },
 
   async show(context: any) {
-    const data = await user.findOne({
-      _id: { $oid: context.params.id },
-    });
-
-    context.response.body = data;
+    try {
+      const data = await user.findOne({
+        _id: ObjectId(context.params.id),
+      });
+      context.response.body = data;
+    } catch (error) {
+      context.response.status = 404;
+      context.response.body = { error: "User does't exist in our database" };
+    }
   },
 
   async store(context: any) {
@@ -37,19 +43,27 @@ export default {
         password: value.password,
       };
 
-      await user.updateOne(
-        { _id: { $oid: context.params.id } },
-        { $set: value },
-      );
-
-      context.response.status = 200;
-      context.response.body = { message: "successfully updated" };
+      try {
+        await user.updateOne(
+          { _id: ObjectId(context.params.id) },
+          { $set: value },
+        );
+        context.response.status = 200;
+        context.response.body = { message: "successfully updated" };
+      } catch (error) {
+        context.response.status = 404;
+        context.response.body = { error: "User does't exist in our database" };
+      }
     }
   },
 
   async destroy(context: any) {
-    await user.deleteOne({ _id: { $oid: context.params.id } });
-
-    context.response.status = 204; // no content
+    try {
+      await user.deleteOne({ _id: ObjectId(context.params.id) });
+      context.response.status = 204; // no content
+    } catch (error) {
+      context.response.status = 404;
+      context.response.body = { error: "User does't exist in our database" };
+    }
   },
 };
