@@ -39,4 +39,33 @@ export default {
 
     return value;
   },
+
+  async validateLogin(context: any) {
+    let errors = [];
+    let status;
+
+    const { value } = await context.request.body();
+
+    if (!value) {
+      context.response.status = 400; //bad request
+      context.response.body = { error: "Please provide the required data" };
+      return false;
+    }
+
+    const fields = ["email", "password"];
+
+    for (let index = 0; index < fields.length; index++) {
+      if (!value[fields[index]]) {
+        status = 422; // unprocessable entity
+        errors.push({ [fields[index]]: `${fields[index]} fiel is required` });
+      }
+    }
+
+    if (status) {
+      context.response.body = { errors };
+      return false;
+    }
+
+    return value;
+  },
 };

@@ -13,7 +13,6 @@ export default {
 
   async verify({ hash, text }: IDataVerify): Promise<Boolean> {
     const result = await bcrypt.compare(text, hash);
-
     return result;
   },
 };
