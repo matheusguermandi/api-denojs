@@ -2,6 +2,7 @@ import { ObjectId } from "https://deno.land/x/mongo@v0.7.0/mod.ts";
 
 import db from "../config/databases.ts";
 import validation from "../validation.ts";
+import hash from "../util/hashPassword.ts";
 
 const user = db.collection("users");
 
@@ -27,6 +28,8 @@ export default {
     const value = await validation.validate(context);
 
     value.created_at = parseInt((new Date().getTime() / 1000).toString());
+
+    value.password = (await hash.bcrypt(value.password)).toString;
 
     if (value) {
       const insertIn = await user.insertOne(value);
