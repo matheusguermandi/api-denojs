@@ -1,6 +1,7 @@
 import db from "../config/databases.ts";
 import hash from "../util/hashPassword.ts";
 import validation from "../validation.ts";
+import token from "../util/token.ts"
 
 const userCollection = db.collection("users");
 
@@ -34,7 +35,7 @@ export default {
       return;
     }
 
-    context.response.body = user;
+    context.response.body = token.generate();
 
   },
 };
