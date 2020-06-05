@@ -10,9 +10,13 @@ export default {
 
     if (value) {
       const user = await userCollection.findOne({ email: value.email });
-      context.response.body = user;
-    }
+      let passwordMatched = false;
 
-   
+      if(user){
+        passwordMatched = await hash.verify(user.password,value.password);
+      }
+      
+      context.response.body = passwordMatched;
+    }
   },
 };
