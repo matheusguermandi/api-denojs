@@ -4,17 +4,17 @@ import db from "../config/databases.ts";
 import validation from "../validation.ts";
 import hash from "../util/hashPassword.ts";
 
-const user = db.collection("users");
+const userCollection = db.collection("users");
 
 export default {
   async index(context: any) {
-    const data = await user.find();
+    const data = await userCollection.find();
     context.response.body = data;
   },
 
   async show(context: any) {
     try {
-      const data = await user.findOne({
+      const data = await userCollection.findOne({
         _id: ObjectId(context.params.id),
       });
       context.response.body = data;
@@ -29,10 +29,10 @@ export default {
 
     value.created_at = parseInt((new Date().getTime() / 1000).toString());
 
-    value.password = (await hash.bcrypt(value.password)).toString;
+    value.password = await hash.bcrypt(value.password);
 
     if (value) {
-      const insertIn = await user.insertOne(value);
+      const insertIn = await userCollection.insertOne(value);
       context.response.status = 201;
       context.response.body = insertIn;
     }
@@ -49,7 +49,7 @@ export default {
       };
 
       try {
-        await user.updateOne(
+        await userCollection.updateOne(
           { _id: ObjectId(context.params.id) },
           { $set: value },
         );
@@ -64,7 +64,7 @@ export default {
 
   async destroy(context: any) {
     try {
-      await user.deleteOne({ _id: ObjectId(context.params.id) });
+      await userCollection.deleteOne({ _id: ObjectId(context.params.id) });
       context.response.status = 204; // no content
     } catch (error) {
       context.response.status = 404;
