@@ -5,7 +5,7 @@ import { makeJwt, setExpiration, Jose, Payload } from "https://deno.land/x/djwt/
 const key = "87c96f50201c4cebe591339c3938d4e4"
 const payload: Payload = {
   iss: "Matheus",
-  exp: setExpiration(new Date().getTime() + 60000),
+  exp: setExpiration(new Date().getTime() + 60000 * 60),
 }
 const header: Jose = {
   alg: "HS256",

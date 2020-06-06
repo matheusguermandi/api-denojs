@@ -6,19 +6,21 @@ export default {
     if (!authorization) {
       context.response.status = 401; //Unauthorized
       context.response.body = {
-        error: " Unauthorized",
+        error: " Unauthorized - No token found",
       };
       return;
     }
 
     const headerToken = authorization.replace("authorization ", "");
-
+   
     const isTokenValid = await token.validate(headerToken);
+
+    // console.log(headerToken + ' - | - ' + isTokenValid);
 
     if (!isTokenValid) {
       context.response.status = 401; //Unauthorized
       context.response.body = {
-        error: " Unauthorized",
+        error: " Unauthorized - Token invalid",
       };
       return;
     }
