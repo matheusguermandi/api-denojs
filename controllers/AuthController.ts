@@ -35,7 +35,7 @@ export default {
       return;
     }
 
-    context.response.body = token.generate();
+    context.response.body = token.generate(user._id.$oid);
 
   },
 };
